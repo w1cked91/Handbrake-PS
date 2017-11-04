@@ -2,7 +2,7 @@
 $serverName   = "\\192.168.1.23"
 $uploadFolder = "\\192.168.1.23\download\"
 $mp4Extension = "mp4"
-$username	  = "w1cked"
+$username     = "w1cked"
 $password     = "@Dm!Nnico8991x"
 
 function FileToMp4 ($sourceFile, $targetMp4, $handbrakeFolder) {
