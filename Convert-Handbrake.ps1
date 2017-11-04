@@ -1,3 +1,10 @@
+#variables
+$serverName   = "\\192.168.1.23"
+$uploadFolder = "\\192.168.1.23\download\"
+$mp4Extension = "mp4"
+$username	  = "w1cked"
+$password     = "@Dm!Nnico8991x"
+
 function FileToMp4 ($sourceFile, $targetMp4, $handbrakeFolder) {
     $cmd = "$handbrakeFolder\HandBrakeCLI.exe"
     $presetSwitch = "-Z"
@@ -75,20 +82,20 @@ function Round-Number ($number) {
 }
 
 function Copy-File ($uncpath, $source, $destination, $extension) {
-    net use $uncpath "@Dm!Nnico8991x" /USER:"w1cked"
+    net use $uncpath $password /USER:$username
 	
-	robocopy $source $destination *.$extension /s
+	robocopy $source $destination *.$extension /s /xo /xc /xn
 
 	net use $uncpath /delete 
 }
 
-function Convert-FilesToMP4 ($videoFolder, $handbrakeFolder, $extension) {
+function Convert-FilesToMP4 ($copyFolder, $videoFolder, $handbrakeFolder, $extension) {
    $logFile = "$videoFolder/Conversion.$(Get-Random).log"
    Write-Host "Logfile is at [$logfile]"
    
    Set-Location $videoFolder
    
-   Copy-File "\\192.168.1.23" "\\192.168.1.23\photo\Dayana\" $videoFolder $extension
+   Copy-File $servername $copyFolder $videoFolder $extension
    
    Get-FileTypeCount -folder $videoFolder -extension $extension | Out-File -Append $logFile 
    Get-FileTypeCount -folder $videoFolder -extension "mp4" | Out-File -Append $logFile 
@@ -96,19 +103,17 @@ function Convert-FilesToMP4 ($videoFolder, $handbrakeFolder, $extension) {
    $FileList = Get-ChildItem -Include "*.$extension" -Recurse
    
    $FileList | ForEach-Object {
-       $currentFile = $_
-       $baseName = $currentFile.BaseName
-       $source = "$videoFolder/$baseName.$extension"
-       $target = "$videoFolder/Done/$baseName.mp4"
+       $currentFile  = $_
+       $baseName 	 = $currentFile.BaseName
+       $source       = "$videoFolder/$baseName.$extension"
+       $target       = "$videoFolder/Done/$baseName/$baseName.mp4"
 
        if (!( Test-Path $target) -And !($source.Contains("New"))) {
            Convert-FromFileToMp4File $source $target $handbrakeFolder
        }
        Copy-SourceTimeStampToTarget -sourceFile $source -targetMp4 $target
    }
-   
-   Copy-File "\\192.168.1.23" $videoFolder "\\192.168.1.23\download\" "mp4"
+   Copy-File $servername $videoFolder $uploadFolder 
 }
 
-Convert-FilesToMP4 -v "C:\Users\nicolas.giunta\Desktop\FileToBeConverted" -h "C:\Program Files\HandBrake" -e "mp4"
-Convert-FilesToMP4 -v "C:\Users\nicolas.giunta\Desktop\FileToBeConverted" -h "C:\Program Files\HandBrake" -e "MOV"
+Convert-FilesToMP4 -c "\\192.168.1.23\video\movie\War for the Planet of the Apes" -v "C:\Users\nicolas.giunta\Desktop\FileToBeConverted" -h "C:\Program Files\HandBrake" -e "mp4"
