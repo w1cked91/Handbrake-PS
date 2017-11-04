@@ -98,7 +98,7 @@ function Convert-FilesToMP4 ($copyFolder, $videoFolder, $handbrakeFolder, $exten
    Copy-File $servername $copyFolder $videoFolder $extension
    
    Get-FileTypeCount -folder $videoFolder -extension $extension | Out-File -Append $logFile 
-   Get-FileTypeCount -folder $videoFolder -extension "mp4" | Out-File -Append $logFile 
+   Get-FileTypeCount -folder $videoFolder -extension $mp4Extension | Out-File -Append $logFile 
 
    $FileList = Get-ChildItem -Include "*.$extension" -Recurse
    
@@ -106,7 +106,7 @@ function Convert-FilesToMP4 ($copyFolder, $videoFolder, $handbrakeFolder, $exten
        $currentFile  = $_
        $baseName 	 = $currentFile.BaseName
        $source       = "$videoFolder/$baseName.$extension"
-       $target       = "$videoFolder/Done/$baseName/$baseName.mp4"
+       $target       = "$videoFolder/Done/$baseName/$baseName.$mp4Extension"
 
        if (!( Test-Path $target) -And !($source.Contains("New"))) {
            Convert-FromFileToMp4File $source $target $handbrakeFolder
@@ -116,4 +116,4 @@ function Convert-FilesToMP4 ($copyFolder, $videoFolder, $handbrakeFolder, $exten
    Copy-File $servername $videoFolder $uploadFolder 
 }
 
-Convert-FilesToMP4 -c "\\192.168.1.23\video\movie\War for the Planet of the Apes" -v "C:\Users\nicolas.giunta\Desktop\FileToBeConverted" -h "C:\Program Files\HandBrake" -e "mp4"
+Convert-FilesToMP4 -c "\\192.168.1.23\video\movie\War for the Planet of the Apes" -v "C:\Users\nicolas.giunta\Desktop\FileToBeConverted" -h "C:\Program Files\HandBrake" -e $mp4Extension
