@@ -85,10 +85,8 @@ function Round-Number ($number) {
 
 function Copy-File ($uncpath, $source, $destination, $extension) {
     net use $uncpath $password /USER:$username
-	
-	robocopy $source $destination *.$mp4Extension /s /xo /xc /xn
-
-	net use $uncpath /delete 
+    robocopy $source $destination *.$mp4Extension /s /xo /xc /xn
+    net use $uncpath /delete 
 }
 
 function Convert-FilesToMP4 ($copyFolder, $videoFolder, $extension) {
@@ -106,7 +104,7 @@ function Convert-FilesToMP4 ($copyFolder, $videoFolder, $extension) {
    
    $FileList | ForEach-Object {
        $currentFile  = $_
-       $baseName 	 = $currentFile.BaseName
+       $baseName     = $currentFile.BaseName
        $source       = "$videoFolder/$baseName.$extension"
        $target       = "$videoFolder/Done/$baseName.$mp4Extension"
 
