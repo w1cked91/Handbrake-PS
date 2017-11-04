@@ -1,11 +1,13 @@
 #variables
-$serverName   = "\\192.168.1.23"
-$uploadFolder = "\\192.168.1.23\download\"
-$mp4Extension = "mp4"
-$username     = "w1cked"
-$password     = "@Dm!Nnico8991x"
+$serverName      = "\\192.168.1.23"
+$uploadFolder    = "\\192.168.1.23\download\"
+$handbrakeFolder = "C:\Program Files\HandBrake"
+$mp4Extension    = "mp4"
+$mkvExtension    = "mkv"
+$username        = "HandBrake"
+$password        = "C0py2NAS"
 
-function FileToMp4 ($sourceFile, $targetMp4, $handbrakeFolder) {
+function FileToMp4 ($sourceFile, $targetMp4) {
     $cmd           = "$handbrakeFolder\HandBrakeCLI.exe"
     $presetSwitch  = "-Z"
     $presetValue   = "Fast 1080p30"
@@ -46,12 +48,12 @@ function Get-VideoDuration ($fullPath) {
     $objFolder.GetDetailsOf($objFile, $LengthColumn)
 }
 
-function Convert-FromFileToMp4File ($sourceFile, $mp4target, $handbrakeFolder) {
+function Convert-FromFileToMp4File ($sourceFile, $mp4target) {
     $source
     $target
     start-sleep 2
     $startTime        = Get-Date
-    FileToMp4 -sourceFile $source -targetMp4 $target -h $handbrakeFolder
+    FileToMp4 -sourceFile $source -targetMp4 $target
     $endTime          = Get-Date
     $secondsToConvert = Round-Number(($endTime - $startTime).TotalSeconds)
     Get-Date | Out-File -Append $logFile
@@ -84,12 +86,12 @@ function Round-Number ($number) {
 function Copy-File ($uncpath, $source, $destination, $extension) {
     net use $uncpath $password /USER:$username
 	
-	robocopy $source $destination *.$extension /s /xo /xc /xn
+	robocopy $source $destination *.$mp4Extension /s /xo /xc /xn
 
 	net use $uncpath /delete 
 }
 
-function Convert-FilesToMP4 ($copyFolder, $videoFolder, $handbrakeFolder, $extension) {
+function Convert-FilesToMP4 ($copyFolder, $videoFolder, $extension) {
    $logFile = "$videoFolder/Conversion.$(Get-Random).log"
    Write-Host "Logfile is at [$logfile]"
    
@@ -104,16 +106,16 @@ function Convert-FilesToMP4 ($copyFolder, $videoFolder, $handbrakeFolder, $exten
    
    $FileList | ForEach-Object {
        $currentFile  = $_
-       $baseName     = $currentFile.BaseName
+       $baseName 	 = $currentFile.BaseName
        $source       = "$videoFolder/$baseName.$extension"
-       $target       = "$videoFolder/Done/$baseName/$baseName.$mp4Extension"
+       $target       = "$videoFolder/Done/$baseName.$mp4Extension"
 
-       if (!( Test-Path $target) -And !($source.Contains("New"))) {
-           Convert-FromFileToMp4File $source $target $handbrakeFolder
+       if (!( Test-Path $target)) {
+           Convert-FromFileToMp4File $source $target
        }
        Copy-SourceTimeStampToTarget -sourceFile $source -targetMp4 $target
    }
-   Copy-File $servername $videoFolder $uploadFolder 
+   Copy-File $servername "$videoFolder/Done" $uploadFolder 
 }
 
-Convert-FilesToMP4 -c "\\192.168.1.23\video\movie\War for the Planet of the Apes" -v "C:\Users\nicolas.giunta\Desktop\FileToBeConverted" -h "C:\Program Files\HandBrake" -e $mp4Extension
+Convert-FilesToMP4 -c "\\192.168.1.23\video\movie\War for the Planet of the Apes" -v "C:\Users\nicolas.giunta\Desktop\FileToBeConverted" -e $mkvExtension
