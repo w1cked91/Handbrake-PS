@@ -104,7 +104,7 @@ function Convert-FilesToMP4 ($copyFolder, $videoFolder, $handbrakeFolder, $exten
    
    $FileList | ForEach-Object {
        $currentFile  = $_
-       $baseName 	 = $currentFile.BaseName
+       $baseName     = $currentFile.BaseName
        $source       = "$videoFolder/$baseName.$extension"
        $target       = "$videoFolder/Done/$baseName/$baseName.$mp4Extension"
 
