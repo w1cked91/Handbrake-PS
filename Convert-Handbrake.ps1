@@ -3,6 +3,7 @@ $serverName      = "\\192.168.1.23"
 $uploadFolder    = "\\192.168.1.23\download\"
 $localFolder     = "C:\Users\nicolas.giunta\Desktop\FileToBeConverted"
 $handbrakeFolder = "C:\Program Files\HandBrake"
+$scriptFolder    = "C:\Users\nicolas.giunta\Desktop\New-HandBrakeConversion.v1.3"
 $mp4Extension    = "mp4"
 $mkvExtension    = "mkv"
 $username        = "HandBrake"
@@ -87,7 +88,7 @@ function Round-Number ($number) {
 function Copy-File ($uncpath, $source, $destination, $extension) {
     net use $uncpath $password /USER:$username
 	
-	robocopy $source $destination *.$mp4Extension /s /xo /xc /xn
+	robocopy $source $destination *.$extension /s /xo /xc /xn
 
 	net use $uncpath /delete 
 }
@@ -107,7 +108,7 @@ function Convert-FilesToMP4 ($copyFolder, $videoFolder, $extension) {
    
    $FileList | ForEach-Object {
        $currentFile  = $_
-       $baseName 	 = $currentFile.BaseName
+       $baseName     = $currentFile.BaseName
        $source       = "$videoFolder/$baseName.$extension"
        $target       = "$videoFolder/Done/$baseName.$mp4Extension"
 
@@ -116,8 +117,8 @@ function Convert-FilesToMP4 ($copyFolder, $videoFolder, $extension) {
        }
        Copy-SourceTimeStampToTarget -sourceFile $source -targetMp4 $target
    }
-   Copy-File $servername "$videoFolder/Done" $uploadFolder 
-   Set-Location $localFolder
+   Copy-File $servername "$videoFolder/Done" $uploadFolder $mp4Extension
+   Set-Location $scriptFolder
 }
 
 Convert-FilesToMP4 -c "\\192.168.1.23\video\TV show\South Park\Season 21" -v $localFolder -e $mkvExtension
