@@ -121,4 +121,4 @@ function Convert-FilesToMP4 ($copyFolder, $videoFolder, $extension) {
    Set-Location $scriptFolder
 }
 
-Convert-FilesToMP4 -c "\\192.168.1.23\video\TV show\South Park\Season 21" -v $localFolder -e $mkvExtension
+Convert-FilesToMP4 -c "$serverName\video\TV show\The Walking Dead\Season 08" -v $localFolder -e $mkvExtension
